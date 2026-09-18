@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Checklist de Historia Clínica · UCE</title>
+<style>
+  :root{
+    --bg:#f8f7fb;
+    --card:#ffffff;
+    --text:#2f3441;
+    --muted:#747b8c;
+    --line:#e7e4ee;
+    --lav:#ddd6fe;
+    --lav2:#f0ecff;
+    --mint:#d9f3e7;
+    --mint2:#effaf5;
+    --peach:#fde4d5;
+    --peach2:#fff4ed;
+    --blue:#dcecff;
+    --blue2:#f2f7ff;
+    --rose:#f8dce6;
+    --rose2:#fff2f6;
+    --yellow:#f7edbf;
+    --yellow2:#fffbea;
+    --accent:#6f63a9;
+    --good:#2f855a;
+    --danger:#9b4c58;
+    --shadow:0 8px 24px rgba(73,62,105,.08);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;
+    background:linear-gradient(180deg,#fbfafe 0%,#f7f8fb 100%);
+    color:var(--text);
+  }
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 70px}
+  .hero{
+    background:linear-gradient(135deg,#efeaff 0%,#eaf7f1 58%,#fff1e8 100%);
+    border:1px solid #ece8f4;
+    border-radius:24px;
+    padding:28px;
+    box-shadow:var(--shadow);
+    margin-bottom:20px;
+  }
+  .hero h1{margin:0 0 8px;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em}
+  .hero p{margin:0;color:#5c6270;line-height:1.5;max-width:820px}
+  .topbar{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-top:22px}
+  .progress-wrap{background:#ffffffb8;border:1px solid #ece8f4;border-radius:16px;padding:14px}
+  .progress-label{display:flex;justify-content:space-between;gap:12px;font-size:13px;font-weight:700;color:#636979;margin-bottom:8px}
+  .progress{height:12px;background:#eceaf1;border-radius:999px;overflow:hidden}
+  .progress > div{height:100%;width:0;background:linear-gradient(90deg,#8e84c4,#8fcbb5);transition:width .25s ease}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{
+    border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;color:#434856;background:white;border:1px solid #e5e2eb;
+  }
+  button:hover{filter:brightness(.98)}
+  .danger{color:var(--danger);background:#fff6f7}
+  .grid{display:grid;gap:14px}
+  details{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 4px 14px rgba(63,55,85,.05);
+  }
+  details[open]{box-shadow:var(--shadow)}
+  summary{
+    list-style:none;
+    cursor:pointer;
+    display:grid;
+    grid-template-columns:auto 1fr auto auto;
+    gap:14px;
+    align-items:center;
+    padding:18px 18px;
+    user-select:none;
+  }
+  summary::-webkit-details-marker{display:none}
+  .num{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-weight:800;color:#4c4769;background:#eee9ff}
+  .title{font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+  .badge{font-size:12px;font-weight:800;padding:7px 10px;border-radius:999px;background:#f2f1f6;color:#707686;white-space:nowrap}
+  .chev{font-size:20px;color:#8a8fa0;transition:transform .2s ease}
+  details[open] .chev{transform:rotate(180deg)}
+  .content{border-top:1px solid var(--line);padding:16px 18px 20px;background:#fff}
+  .hint{margin:0 0 14px;padding:11px 13px;border-radius:12px;background:#faf9fc;color:#606675;font-size:13px;line-height:1.45}
+  .checklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px 14px}
+  label.item{
+    display:flex;align-items:flex-start;gap:10px;padding:10px 11px;border:1px solid #ece9f1;border-radius:12px;background:#fcfcfd;line-height:1.35;font-size:14px;cursor:pointer;
+  }
+  label.item:hover{background:#faf9fc}
+  input[type="checkbox"]{margin-top:2px;width:18px;height:18px;accent-color:#7c72b4;flex:0 0 auto}
+  .section-tools{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:15px;padding-top:14px;border-top:1px dashed #e7e4ec;flex-wrap:wrap}
+  .section-tools .small{font-size:12px;color:var(--muted);font-weight:700}
+  .section-tools button{padding:8px 11px;font-size:12px}
+  .calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:10px 0 14px}
+  .calc{border-radius:14px;padding:13px;border:1px solid #e9e5ef;background:#fbfafc}
+  .calc h4{margin:0 0 10px;font-size:14px}
+  .calc input,.calc select{
+    width:100%;border:1px solid #ddd9e6;background:white;padding:9px 10px;border-radius:10px;font:inherit;color:var(--text);margin-top:6px
+  }
+  .result{margin-top:10px;font-weight:800;color:#5c5687}
+  .footer-note{margin-top:22px;background:#fff;border:1px solid #e7e4ee;border-radius:18px;padding:18px;box-shadow:0 4px 14px rgba(63,55,85,.04)}
+  .footer-note strong{display:block;margin-bottom:6px}
+  .pastel-1 .num{background:var(--lav)} .pastel-1 .content{background:linear-gradient(180deg,#fff 0%,var(--lav2) 180%)}
+  .pastel-2 .num{background:var(--mint)} .pastel-2 .content{background:linear-gradient(180deg,#fff 0%,var(--mint2) 180%)}
+  .pastel-3 .num{background:var(--peach)} .pastel-3 .content{background:linear-gradient(180deg,#fff 0%,var(--peach2) 180%)}
+  .pastel-4 .num{background:var(--blue)} .pastel-4 .content{background:linear-gradient(180deg,#fff 0%,var(--blue2) 180%)}
+  .pastel-5 .num{background:var(--rose)} .pastel-5 .content{background:linear-gradient(180deg,#fff 0%,var(--rose2) 180%)}
+  .pastel-6 .num{background:var(--yellow)} .pastel-6 .content{background:linear-gradient(180deg,#fff 0%,var(--yellow2) 180%)}
+  @media (max-width:720px){
+    .topbar{grid-template-columns:1fr}
+    summary{grid-template-columns:auto 1fr auto}.chev{display:none}.badge{font-size:11px}
+    .hero{padding:22px 18px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Checklist de Historia Clínica · UCE</h1>
+    <p>Herramienta de auto-revisión para residentes. Abre cada apartado, marca lo que has comprobado y asegúrate de que la historia permite entender cómo estaba el paciente, qué ha ocurrido, qué has encontrado, qué crees que tiene y qué vas a hacer.</p>
+    <div class="topbar">
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Progreso global</span><span id="globalText">0%</span></div>
+        <div class="progress"><div id="globalBar"></div></div>
+      </div>
+      <div class="actions">
+        <button onclick="expandAll()">Abrir todo</button>
+        <button onclick="collapseAll()">Cerrar todo</button>
+        <button class="danger" onclick="resetAll()">Reiniciar</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="grid" id="sections">
+
+    <details class="pastel-1" data-section>
+      <summary><div class="num">1</div><div><div class="title">Motivo de consulta / ingreso</div><div class="subtitle">Breve, sindrómico y orientado al motivo de UCE</div></div><div class="badge">0/4</div><div class="chev">⌄</div></summary>
+      <div class="content"><p class="hint">Debe expresar de forma sencilla por qué consulta o ingresa, sin convertirlo en la enfermedad actual.</p><div class="checklist">
+        <label class="item"><input type="checkbox">Síntoma o problema principal</label>
+        <label class="item"><input type="checkbox">Duración aproximada</label>
+        <label class="item"><input type="checkbox">Procedencia del paciente</label>
+        <label class="item"><input type="checkbox">Motivo concreto que justifica ingreso en UCE</label>
+      </div><div class="section-tools"><span class="small">Evitar diagnósticos no demostrados.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-2" data-section>
+      <summary><div class="num">2</div><div><div class="title">Alergias</div><div class="subtitle">Alergia real, reacción y gravedad</div></div><div class="badge">0/4</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Alergias medicamentosas</label>
+        <label class="item"><input type="checkbox">Tipo de reacción</label>
+        <label class="item"><input type="checkbox">Gravedad de la reacción</label>
+        <label class="item"><input type="checkbox">Registrar “No alergias medicamentosas conocidas” si procede</label>
+      </div><div class="section-tools"><span class="small">Diferenciar alergia, intolerancia y efecto adverso.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-3" data-section>
+      <summary><div class="num">3</div><div><div class="title">Antecedentes médicos</div><div class="subtitle">Comorbilidades relevantes y situación actual</div></div><div class="badge">0/18</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Hipertensión arterial</label><label class="item"><input type="checkbox">Diabetes mellitus</label>
+        <label class="item"><input type="checkbox">Dislipemia / obesidad</label><label class="item"><input type="checkbox">Cardiopatía isquémica / insuficiencia cardiaca</label>
+        <label class="item"><input type="checkbox">Valvulopatía / arritmias</label><label class="item"><input type="checkbox">Enfermedad cerebrovascular</label>
+        <label class="item"><input type="checkbox">EPOC / asma / SAOS / intersticial</label><label class="item"><input type="checkbox">Enfermedad renal crónica</label>
+        <label class="item"><input type="checkbox">Hepatopatía</label><label class="item"><input type="checkbox">Patología digestiva relevante</label>
+        <label class="item"><input type="checkbox">Patología neurológica / psiquiátrica</label><label class="item"><input type="checkbox">Enfermedad autoinmune / inflamatoria</label>
+        <label class="item"><input type="checkbox">Neoplasias: tipo, estadio, tratamiento, situación</label><label class="item"><input type="checkbox">Enfermedades hematológicas</label>
+        <label class="item"><input type="checkbox">Inmunosupresión</label><label class="item"><input type="checkbox">Antecedentes trombóticos y hemorrágicos</label>
+        <label class="item"><input type="checkbox">Ingresos recientes</label><label class="item"><input type="checkbox">Otros antecedentes relevantes</label>
+      </div><div class="section-tools"><span class="small">Añadir año, gravedad o situación actual cuando aporte valor.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-4" data-section>
+      <summary><div class="num">4</div><div><div class="title">Antecedentes quirúrgicos y dispositivos</div><div class="subtitle">Intervenciones, prótesis y material implantado</div></div><div class="badge">0/8</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Intervenciones previas</label><label class="item"><input type="checkbox">Año aproximado</label>
+        <label class="item"><input type="checkbox">Complicaciones quirúrgicas relevantes</label><label class="item"><input type="checkbox">Prótesis articulares / valvulares</label>
+        <label class="item"><input type="checkbox">Marcapasos / desfibrilador</label><label class="item"><input type="checkbox">Stents</label>
+        <label class="item"><input type="checkbox">Catéteres / reservorios / sondas</label><label class="item"><input type="checkbox">Otros cuerpos extraños o derivaciones</label>
+      </div><div class="section-tools"><span class="small">Clave ante bacteriemia o sospecha de infección de dispositivo.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-5" data-section>
+      <summary><div class="num">5</div><div><div class="title">Antecedentes familiares</div><div class="subtitle">Cardiovascular, cáncer, autoinmunidad y trombosis</div></div><div class="badge">0/8</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Enfermedad cardiovascular precoz</label><label class="item"><input type="checkbox">Muerte súbita</label>
+        <label class="item"><input type="checkbox">Neoplasias familiares relevantes</label><label class="item"><input type="checkbox">Enfermedades hereditarias</label>
+        <label class="item"><input type="checkbox">Enfermedades autoinmunes</label><label class="item"><input type="checkbox">Historia familiar de ETEV</label>
+        <label class="item"><input type="checkbox">Edad y parentesco del familiar con ETEV</label><label class="item"><input type="checkbox">Trombofilia familiar conocida</label>
+      </div><div class="section-tools"><span class="small">Evitar “sin interés” si no se ha preguntado.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-6" data-section>
+      <summary><div class="num">6</div><div><div class="title">Hábitos tóxicos</div><div class="subtitle">Tabaco, alcohol y otras sustancias</div></div><div class="badge">0/10</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Fumador / exfumador / nunca fumador</label><label class="item"><input type="checkbox">Cigarrillos al día</label>
+        <label class="item"><input type="checkbox">Edad de inicio</label><label class="item"><input type="checkbox">Edad de abandono si procede</label>
+        <label class="item"><input type="checkbox">Índice paquetes-año calculado</label><label class="item"><input type="checkbox">Vapeo / cannabis</label>
+        <label class="item"><input type="checkbox">Tipo y cantidad de alcohol</label><label class="item"><input type="checkbox">Frecuencia de consumo</label>
+        <label class="item"><input type="checkbox">UBE/día o UBE/semana</label><label class="item"><input type="checkbox">Otras drogas</label>
+      </div>
+      <div class="calc-grid">
+        <div class="calc"><h4>🧮 Paquetes-año</h4><input id="cigs" type="number" min="0" placeholder="Cigarrillos/día"><input id="years" type="number" min="0" placeholder="Años fumando"><div class="result" id="packResult">—</div></div>
+        <div class="calc"><h4>🍷 UBE aproximadas</h4><input id="ml" type="number" min="0" placeholder="ml consumidos"><input id="abv" type="number" min="0" step="0.1" placeholder="% alcohol"><div class="result" id="ubeResult">—</div></div>
+      </div>
+      <div class="section-tools"><span class="small">PA = (cigarrillos/día ÷ 20) × años. 1 UBE ≈ 10 g alcohol.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-1" data-section>
+      <summary><div class="num">7</div><div><div class="title">Tratamiento habitual</div><div class="subtitle">Conciliación farmacológica completa</div></div><div class="badge">0/9</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Principio activo, no nombre comercial</label><label class="item"><input type="checkbox">Dosis</label>
+        <label class="item"><input type="checkbox">Vía</label><label class="item"><input type="checkbox">Frecuencia / horario</label>
+        <label class="item"><input type="checkbox">Adherencia real</label><label class="item"><input type="checkbox">Última dosis si es relevante</label>
+        <label class="item"><input type="checkbox">Cambios recientes / automedicación</label><label class="item"><input type="checkbox">AINE / suplementos / fitoterapia</label>
+        <label class="item"><input type="checkbox">Anticoagulantes / antiagregantes: indicación y duración</label>
+      </div><div class="section-tools"><span class="small">Ejemplo: apixabán 5 mg VO cada 12 h.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-2" data-section>
+      <summary><div class="num">8</div><div><div class="title">Situación basal</div><div class="subtitle">Funcional, cognitiva, social y laboral</div></div><div class="badge">0/13</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Independencia para ABVD</label><label class="item"><input type="checkbox">Deambulación habitual</label>
+        <label class="item"><input type="checkbox">Bastón / andador / silla</label><label class="item"><input type="checkbox">Caídas recientes</label>
+        <label class="item"><input type="checkbox">Barthel si procede</label><label class="item"><input type="checkbox">Situación cognitiva basal</label>
+        <label class="item"><input type="checkbox">Domicilio habitual</label><label class="item"><input type="checkbox">Con quién vive</label>
+        <label class="item"><input type="checkbox">Cuidador principal</label><label class="item"><input type="checkbox">Apoyo familiar / social</label>
+        <label class="item"><input type="checkbox">Ayuda domiciliaria / teleasistencia</label><label class="item"><input type="checkbox">Profesión / situación laboral</label>
+        <label class="item"><input type="checkbox">Exposiciones laborales relevantes</label>
+      </div><div class="section-tools"><span class="small">Muy importante para comparar con la situación actual y planificar el alta.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-3" data-section>
+      <summary><div class="num">9</div><div><div class="title">Enfermedad actual</div><div class="subtitle">Cronología completa y síntomas pertinentes</div></div><div class="badge">0/11</div><div class="chev">⌄</div></summary>
+      <div class="content"><p class="hint">La enfermedad actual debe responder: qué le pasa, desde cuándo, cómo empezó, cómo ha evolucionado, qué síntomas acompañan y qué ha hecho hasta ahora.</p><div class="checklist">
+        <label class="item"><input type="checkbox">Situación previa al episodio</label><label class="item"><input type="checkbox">Fecha / momento de inicio</label>
+        <label class="item"><input type="checkbox">Inicio brusco o progresivo</label><label class="item"><input type="checkbox">Cronología</label>
+        <label class="item"><input type="checkbox">Evolución</label><label class="item"><input type="checkbox">A qué lo atribuye el paciente</label>
+        <label class="item"><input type="checkbox">Síntoma principal bien caracterizado</label><label class="item"><input type="checkbox">Síntomas acompañantes</label>
+        <label class="item"><input type="checkbox">Negativos pertinentes</label><label class="item"><input type="checkbox">Tratamientos / consultas previas y respuesta</label>
+        <label class="item"><input type="checkbox">Motivo final de consulta hospitalaria</label>
+      </div><div class="section-tools"><span class="small">Debe leerse como una secuencia temporal comprensible.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-4" data-section>
+      <summary><div class="num">10</div><div><div class="title">Dolor</div><div class="subtitle">Caracterización completa del síntoma</div></div><div class="badge">0/12</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Inicio</label><label class="item"><input type="checkbox">Localización</label><label class="item"><input type="checkbox">Irradiación</label>
+        <label class="item"><input type="checkbox">Intensidad 0–10</label><label class="item"><input type="checkbox">Tipo de dolor</label><label class="item"><input type="checkbox">Continuo / intermitente</label>
+        <label class="item"><input type="checkbox">Duración de episodios</label><label class="item"><input type="checkbox">Desencadenantes</label><label class="item"><input type="checkbox">Factores que alivian / empeoran</label>
+        <label class="item"><input type="checkbox">Relación con esfuerzo / respiración / movimiento</label><label class="item"><input type="checkbox">Relación con ingesta si procede</label><label class="item"><input type="checkbox">Analgesia y respuesta</label>
+      </div><div class="section-tools"><span class="small">Añadir síntomas acompañantes específicos según la localización.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-5" data-section>
+      <summary><div class="num">11</div><div><div class="title">Fiebre / síndrome infeccioso</div><div class="subtitle">Caracterización y búsqueda de foco</div></div><div class="badge">0/14</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Inicio</label><label class="item"><input type="checkbox">Temperatura máxima medida</label><label class="item"><input type="checkbox">Método de medición</label>
+        <label class="item"><input type="checkbox">Escalofríos / tiritona</label><label class="item"><input type="checkbox">Sudoración</label><label class="item"><input type="checkbox">Antitérmicos y respuesta</label>
+        <label class="item"><input type="checkbox">Síntomas respiratorios</label><label class="item"><input type="checkbox">Síntomas urinarios</label><label class="item"><input type="checkbox">Síntomas digestivos</label>
+        <label class="item"><input type="checkbox">Piel / partes blandas</label><label class="item"><input type="checkbox">ORL / dental</label><label class="item"><input type="checkbox">Neurológico</label>
+        <label class="item"><input type="checkbox">Osteoarticular</label><label class="item"><input type="checkbox">Foco aparente o ausencia de foco</label>
+      </div><div class="section-tools"><span class="small">Buscar activamente el foco, no solo registrar “fiebre”.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-6" data-section>
+      <summary><div class="num">12</div><div><div class="title">Disnea / respiratorio</div><div class="subtitle">Disnea, tos, expectoración y síntomas asociados</div></div><div class="badge">0/13</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Inicio y velocidad de instauración</label><label class="item"><input type="checkbox">Basal / esfuerzo / reposo</label><label class="item"><input type="checkbox">Situación funcional respiratoria previa</label>
+        <label class="item"><input type="checkbox">Ortopnea</label><label class="item"><input type="checkbox">Disnea paroxística nocturna</label><label class="item"><input type="checkbox">Dolor torácico</label>
+        <label class="item"><input type="checkbox">Tos seca / productiva</label><label class="item"><input type="checkbox">Expectoración: cantidad / color / purulencia</label><label class="item"><input type="checkbox">Hemoptisis</label>
+        <label class="item"><input type="checkbox">Sibilancias</label><label class="item"><input type="checkbox">Fiebre</label><label class="item"><input type="checkbox">Edemas</label><label class="item"><input type="checkbox">Palpitaciones / síncope</label>
+      </div><div class="section-tools"><span class="small">Comparar siempre con la situación basal del paciente.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-1" data-section>
+      <summary><div class="num">13</div><div><div class="title">Diarrea / aparato digestivo</div><div class="subtitle">Características, contexto epidemiológico y antibióticos</div></div><div class="badge">0/14</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Inicio</label><label class="item"><input type="checkbox">Número de deposiciones/día</label><label class="item"><input type="checkbox">Consistencia / volumen</label>
+        <label class="item"><input type="checkbox">Sangre / moco</label><label class="item"><input type="checkbox">Dolor abdominal</label><label class="item"><input type="checkbox">Vómitos</label>
+        <label class="item"><input type="checkbox">Fiebre</label><label class="item"><input type="checkbox">Tenesmo</label><label class="item"><input type="checkbox">Tolerancia oral</label>
+        <label class="item"><input type="checkbox">Alimentos sospechosos</label><label class="item"><input type="checkbox">Contactos afectados</label><label class="item"><input type="checkbox">Viajes</label>
+        <label class="item"><input type="checkbox">Antibióticos / ingreso reciente</label><label class="item"><input type="checkbox">Inmunosupresión</label>
+      </div><div class="section-tools"><span class="small">Considerar C. difficile si hay exposición antibiótica o sanitaria.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-2" data-section>
+      <summary><div class="num">14</div><div><div class="title">Módulo infección</div><div class="subtitle">Antibióticos previos, dispositivos y microbiología</div></div><div class="badge">0/11</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Antibióticos en los últimos 3 meses</label><label class="item"><input type="checkbox">Cuál, indicación y duración</label>
+        <label class="item"><input type="checkbox">Cuándo finalizó</label><label class="item"><input type="checkbox">Respuesta clínica</label>
+        <label class="item"><input type="checkbox">Ingreso hospitalario reciente</label><label class="item"><input type="checkbox">Residencia / institucionalización</label>
+        <label class="item"><input type="checkbox">Hemodiálisis</label><label class="item"><input type="checkbox">Sonda / catéter / reservorio</label>
+        <label class="item"><input type="checkbox">Aislamiento previo de multirresistente</label><label class="item"><input type="checkbox">Microorganismo, muestra y fecha</label>
+        <label class="item"><input type="checkbox">Antibiograma previo si disponible</label>
+      </div><div class="section-tools"><span class="small">Especialmente relevante para decidir antibioterapia empírica.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-3" data-section>
+      <summary><div class="num">15</div><div><div class="title">Módulo ETEV</div><div class="subtitle">TVP, TEP, antecedentes y factores de riesgo</div></div><div class="badge">0/21</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Dolor en miembro inferior</label><label class="item"><input type="checkbox">Edema unilateral</label><label class="item"><input type="checkbox">Eritema / calor</label>
+        <label class="item"><input type="checkbox">Aumento de perímetro</label><label class="item"><input type="checkbox">Inicio y evolución</label><label class="item"><input type="checkbox">Disnea</label>
+        <label class="item"><input type="checkbox">Dolor torácico / pleurítico</label><label class="item"><input type="checkbox">Tos / hemoptisis</label><label class="item"><input type="checkbox">Palpitaciones</label>
+        <label class="item"><input type="checkbox">Presíncope / síncope</label><label class="item"><input type="checkbox">TVP / TEP previos</label><label class="item"><input type="checkbox">Fecha, localización y tratamiento previo</label>
+        <label class="item"><input type="checkbox">Provocada / no provocada previa</label><label class="item"><input type="checkbox">Cirugía / traumatismo reciente</label><label class="item"><input type="checkbox">Inmovilización / ingreso reciente</label>
+        <label class="item"><input type="checkbox">Viaje prolongado</label><label class="item"><input type="checkbox">Neoplasia activa</label><label class="item"><input type="checkbox">Catéter venoso</label>
+        <label class="item"><input type="checkbox">Embarazo / puerperio</label><label class="item"><input type="checkbox">Anticonceptivos / terapia hormonal</label><label class="item"><input type="checkbox">Antecedentes familiares de ETEV</label>
+      </div><div class="section-tools"><span class="small">Clasificar al final: provocada, no provocada, factor transitorio o persistente.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-4" data-section>
+      <summary><div class="num">16</div><div><div class="title">Interrogatorio por aparatos</div><div class="subtitle">Negativos pertinentes y síntomas olvidados</div></div><div class="badge">0/9</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">General: fiebre, pérdida de peso, astenia, anorexia</label><label class="item"><input type="checkbox">Neurológico</label>
+        <label class="item"><input type="checkbox">Cardiovascular</label><label class="item"><input type="checkbox">Respiratorio</label>
+        <label class="item"><input type="checkbox">Digestivo</label><label class="item"><input type="checkbox">Genitourinario</label>
+        <label class="item"><input type="checkbox">Osteomuscular</label><label class="item"><input type="checkbox">Dermatológico</label><label class="item"><input type="checkbox">Hematológico / endocrino</label>
+      </div><div class="section-tools"><span class="small">No hace falta desarrollarlo todo si es irrelevante; sí los negativos clínicamente pertinentes.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-5" data-section>
+      <summary><div class="num">17</div><div><div class="title">Exploración física</div><div class="subtitle">Constantes y exploración sistemática completa</div></div><div class="badge">0/28</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">TA</label><label class="item"><input type="checkbox">FC</label><label class="item"><input type="checkbox">FR</label><label class="item"><input type="checkbox">Temperatura</label>
+        <label class="item"><input type="checkbox">SatO₂ y oxigenoterapia</label><label class="item"><input type="checkbox">Peso / talla si relevante</label>
+        <label class="item"><input type="checkbox">Estado general</label><label class="item"><input type="checkbox">Consciencia / orientación</label><label class="item"><input type="checkbox">Perfusión / hidratación</label><label class="item"><input type="checkbox">Trabajo respiratorio</label>
+        <label class="item"><input type="checkbox">Mucosas / orofaringe</label><label class="item"><input type="checkbox">Adenopatías / yugulares</label>
+        <label class="item"><input type="checkbox">Ritmo / tonos cardiacos</label><label class="item"><input type="checkbox">Soplos</label><label class="item"><input type="checkbox">Pulsos / relleno capilar</label>
+        <label class="item"><input type="checkbox">Murmullo vesicular</label><label class="item"><input type="checkbox">Crepitantes / sibilancias / roncus</label><label class="item"><input type="checkbox">Simetría / hipofonesis</label>
+        <label class="item"><input type="checkbox">Abdomen blando / dolor</label><label class="item"><input type="checkbox">Defensa / irritación peritoneal</label><label class="item"><input type="checkbox">Masas / organomegalias</label><label class="item"><input type="checkbox">Puñopercusión renal si procede</label>
+        <label class="item"><input type="checkbox">Extremidades: edemas / simetría</label><label class="item"><input type="checkbox">Signos inflamatorios / lesiones</label><label class="item"><input type="checkbox">Perímetro de miembros si sospecha TVP</label>
+        <label class="item"><input type="checkbox">Piel: lesiones / úlceras / púrpura</label><label class="item"><input type="checkbox">Exploración neurológica dirigida</label><label class="item"><input type="checkbox">Marcha si procede</label>
+      </div><div class="section-tools"><span class="small">No documentar como normal lo que no se ha explorado.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-6" data-section>
+      <summary><div class="num">18</div><div><div class="title">Pruebas complementarias</div><div class="subtitle">Volcado útil de pruebas previas al ingreso</div></div><div class="badge">0/10</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Hemograma</label><label class="item"><input type="checkbox">Bioquímica / función renal / iones</label>
+        <label class="item"><input type="checkbox">Perfil hepático</label><label class="item"><input type="checkbox">PCR / PCT si disponible</label>
+        <label class="item"><input type="checkbox">Coagulación / gasometría si procede</label><label class="item"><input type="checkbox">Biomarcadores específicos</label>
+        <label class="item"><input type="checkbox">Microbiología: fecha, muestra y resultado</label><label class="item"><input type="checkbox">ECG</label>
+        <label class="item"><input type="checkbox">Radiografía / ecografía</label><label class="item"><input type="checkbox">TAC / angio-TAC / RM y hallazgo relevante</label>
+      </div><div class="section-tools"><span class="small">Priorizar datos que expliquen la decisión clínica, no copiar resultados sin interpretar.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-1" data-section>
+      <summary><div class="num">19</div><div><div class="title">Evolución en UCE</div><div class="subtitle">Qué ha cambiado y qué falta para el alta</div></div><div class="badge">0/10</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Cómo está hoy: mejor / igual / peor</label><label class="item"><input type="checkbox">Síntomas actuales</label>
+        <label class="item"><input type="checkbox">Incidencias</label><label class="item"><input type="checkbox">Estabilidad hemodinámica</label>
+        <label class="item"><input type="checkbox">Fiebre / temperatura</label><label class="item"><input type="checkbox">SatO₂ / necesidad de oxígeno</label>
+        <label class="item"><input type="checkbox">Cambios en exploración</label><label class="item"><input type="checkbox">Analítica / microbiología / imagen nueva</label>
+        <label class="item"><input type="checkbox">Respuesta al tratamiento</label><label class="item"><input type="checkbox">Qué falta para poder dar el alta</label>
+      </div><div class="section-tools"><span class="small">Frase útil: “Permanece ingresado pendiente de…”</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-2" data-section>
+      <summary><div class="num">20</div><div><div class="title">Impresión diagnóstica</div><div class="subtitle">Diagnóstico sencillo, concreto y clínicamente útil</div></div><div class="badge">0/4</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Diagnóstico principal</label><label class="item"><input type="checkbox">Diagnósticos secundarios relevantes</label>
+        <label class="item"><input type="checkbox">Complicaciones</label><label class="item"><input type="checkbox">Comorbilidades que condicionan el manejo</label>
+      </div><div class="section-tools"><span class="small">Si la etiología no está clara, usar diagnóstico sindrómico.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-3" data-section>
+      <summary><div class="num">21</div><div><div class="title">Plan</div><div class="subtitle">Diagnóstico, tratamiento, monitorización y alta</div></div><div class="badge">0/14</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Analíticas pendientes</label><label class="item"><input type="checkbox">Microbiología pendiente</label>
+        <label class="item"><input type="checkbox">Pruebas de imagen</label><label class="item"><input type="checkbox">Interconsultas</label>
+        <label class="item"><input type="checkbox">Tratamiento iniciado</label><label class="item"><input type="checkbox">Tratamiento retirado / modificado</label>
+        <label class="item"><input type="checkbox">Dosis / vía / duración prevista</label><label class="item"><input type="checkbox">Dieta / fluidoterapia / oxígeno</label>
+        <label class="item"><input type="checkbox">Movilización / profilaxis ETEV si procede</label><label class="item"><input type="checkbox">Conciliación de tratamiento domiciliario</label>
+        <label class="item"><input type="checkbox">Monitorización de constantes</label><label class="item"><input type="checkbox">Diuresis / balance si procede</label>
+        <label class="item"><input type="checkbox">Criterios pendientes para el alta</label><label class="item"><input type="checkbox">Seguimiento, educación y signos de alarma</label>
+      </div><div class="section-tools"><span class="small">El plan debe explicar qué vas a hacer y por qué.</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+    <details class="pastel-4" data-section>
+      <summary><div class="num">✓</div><div><div class="title">Revisión final antes de enseñársela al adjunto</div><div class="subtitle">Control de calidad de la historia</div></div><div class="badge">0/12</div><div class="chev">⌄</div></summary>
+      <div class="content"><div class="checklist">
+        <label class="item"><input type="checkbox">Alergias verificadas</label><label class="item"><input type="checkbox">Tratamiento conciliado</label>
+        <label class="item"><input type="checkbox">Situación basal registrada</label><label class="item"><input type="checkbox">Hábitos tóxicos cuantificados</label>
+        <label class="item"><input type="checkbox">Enfermedad actual cronológica y comprensible</label><label class="item"><input type="checkbox">Síntoma principal bien caracterizado</label>
+        <label class="item"><input type="checkbox">Negativos pertinentes recogidos</label><label class="item"><input type="checkbox">Exploración dirigida y completa</label>
+        <label class="item"><input type="checkbox">Pruebas complementarias revisadas</label><label class="item"><input type="checkbox">Diagnóstico principal definido</label>
+        <label class="item"><input type="checkbox">Plan diagnóstico-terapéutico definido</label><label class="item"><input type="checkbox">Está claro qué falta para el alta</label>
+      </div><div class="section-tools"><span class="small">Pregunta final: ¿otra persona entendería qué pasa, qué has encontrado y qué vas a hacer?</span><button onclick="toggleSection(this,true)">Marcar todo</button></div></div>
+    </details>
+
+  </main>
+
+  <div class="footer-note"><strong>Regla de oro</strong>No marcar como “normal” aquello que no se ha preguntado o explorado. Esta herramienta es un apoyo docente y no sustituye el juicio clínico ni los protocolos locales.</div>
+</div>
+<script>
+  const sectionEls = [...document.querySelectorAll('[data-section]')];
+  const allChecks = () => [...document.querySelectorAll('input[type="checkbox"]')];
+
+  function updateProgress(){
+    let total=0, checked=0;
+    sectionEls.forEach(sec=>{
+      const boxes=[...sec.querySelectorAll('input[type="checkbox"]')];
+      const c=boxes.filter(b=>b.checked).length;
+      total+=boxes.length; checked+=c;
+      const badge=sec.querySelector('.badge');
+      if(badge) badge.textContent=`${c}/${boxes.length}`;
+    });
+    const pct = total ? Math.round(checked/total*100) : 0;
+    document.getElementById('globalText').textContent = `${pct}%`;
+    document.getElementById('globalBar').style.width = `${pct}%`;
+    localStorage.setItem('uceChecklistState', JSON.stringify(allChecks().map(x=>x.checked)));
+  }
+
+  function toggleSection(btn, state){
+    const sec=btn.closest('[data-section]');
+    sec.querySelectorAll('input[type="checkbox"]').forEach(c=>c.checked=state);
+    updateProgress();
+  }
+  function expandAll(){sectionEls.forEach(s=>s.open=true)}
+  function collapseAll(){sectionEls.forEach(s=>s.open=false)}
+  function resetAll(){
+    if(confirm('¿Quieres desmarcar todo el checklist?')){
+      allChecks().forEach(c=>c.checked=false); updateProgress();
+    }
+  }
+  document.addEventListener('change',e=>{if(e.target.matches('input[type="checkbox"]')) updateProgress()});
+
+  // Restore state
+  try{
+    const saved=JSON.parse(localStorage.getItem('uceChecklistState')||'null');
+    if(Array.isArray(saved)) allChecks().forEach((c,i)=>{if(typeof saved[i]==='boolean') c.checked=saved[i]});
+  }catch(e){}
+
+  // Calculators
+  function calcPack(){
+    const c=+document.getElementById('cigs').value||0;
+    const y=+document.getElementById('years').value||0;
+    document.getElementById('packResult').textContent = (c&&y) ? `${((c/20)*y).toFixed(1)} paquetes-año` : '—';
+  }
+  function calcUBE(){
+    const ml=+document.getElementById('ml').value||0;
+    const abv=+document.getElementById('abv').value||0;
+    // grams alcohol = ml * (%/100) * density ethanol 0.789 g/ml; UBE Spain ~=10g
+    const ube = (ml*(abv/100)*0.789)/10;
+    document.getElementById('ubeResult').textContent = (ml&&abv) ? `${ube.toFixed(1)} UBE` : '—';
+  }
+  ['cigs','years'].forEach(id=>document.getElementById(id).addEventListener('input',calcPack));
+  ['ml','abv'].forEach(id=>document.getElementById(id).addEventListener('input',calcUBE));
+  updateProgress();
+</script>
+</body>
+</html>
